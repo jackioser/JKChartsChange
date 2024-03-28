@@ -11,6 +11,7 @@
 
 import Foundation
 import CoreGraphics
+import UIKit
 
 open class RadarChartRenderer: LineRadarRenderer
 {
@@ -52,7 +53,7 @@ open class RadarChartRenderer: LineRadarRenderer
                                              withDefaultDescription: "Radar Chart")
         self.accessibleChartElements.append(element)
 
-        for case let set as RadarChartDataSetProtocol in (radarData as ChartData) where set.isVisible
+        for case let set as RadarChartDataSetProtocol in  (radarData as ChartData) where set.isVisible
         {
             drawDataSet(context: context, dataSet: set, mostEntries: mostEntries)
         }
@@ -291,20 +292,25 @@ open class RadarChartRenderer: LineRadarRenderer
         
         let xIncrements = 1 + chart.skipWebLineCount
         let maxEntryCount = chart.data?.maxEntryCountSet?.entryCount ?? 0
-
+        
+        
         for i in stride(from: 0, to: maxEntryCount, by: xIncrements)
         {
-            let p = center.moving(distance: CGFloat(chart.yRange) * factor,
-                                  atAngle: sliceangle * CGFloat(i) + rotationangle)
-            
+            let r = CGFloat(chart.yRange) * factor
+            let a = sliceangle * CGFloat(i) + rotationangle
+            let p = center.moving(distance: r,
+                                  atAngle: a)
             _webLineSegmentsBuffer[0].x = center.x
             _webLineSegmentsBuffer[0].y = center.y
             _webLineSegmentsBuffer[1].x = p.x
             _webLineSegmentsBuffer[1].y = p.y
             
+            // 画竖线
             context.strokeLineSegments(between: _webLineSegmentsBuffer)
+            
         }
-        
+
+//
         // draw the inner-web
         context.setLineWidth(chart.innerWebLineWidth)
         context.setStrokeColor(chart.innerWebColor.cgColor)
@@ -314,10 +320,9 @@ open class RadarChartRenderer: LineRadarRenderer
         
         for j in 0 ..< labelCount
         {
+            let r = CGFloat(chart.yAxis.entries[j] - chart.chartYMin) * factor
             for i in 0 ..< data.entryCount
             {
-                let r = CGFloat(chart.yAxis.entries[j] - chart.chartYMin) * factor
-
                 let p1 = center.moving(distance: r, atAngle: sliceangle * CGFloat(i) + rotationangle)
                 let p2 = center.moving(distance: r, atAngle: sliceangle * CGFloat(i + 1) + rotationangle)
                 
@@ -326,8 +331,20 @@ open class RadarChartRenderer: LineRadarRenderer
                 _webLineSegmentsBuffer[1].x = p2.x
                 _webLineSegmentsBuffer[1].y = p2.y
                 
-                context.strokeLineSegments(between: _webLineSegmentsBuffer)
+//                context.strokeLineSegments(between: _webLineSegmentsBuffer)
+
             }
+//            context.strokeEllipse(in: CGRect(x: center.x, y: center.y, width: r, height: r))
+            
+            /*画圆*/
+//            let topCircle = UIBezierPath(arcCenter: center, radius: r, startAngle: -CGFloat.pi, endAngle: CGFloat.pi, clockwise: true)
+//             context.setBlendMode(.clear)
+//            context.setFillColor(UIColor.red.cgColor)
+//             context.addPath(topCircle.cgPath)
+            
+//            context.addArc(center: center, radius: r, startAngle: -CGFloat.pi, endAngle: CGFloat.pi, clockwise: true)
+//            context.strokePath()
+//            context.fillPath()
         }
         
         context.restoreGState()

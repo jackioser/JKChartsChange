@@ -21,7 +21,7 @@ private func fetchLabelColor() -> UIColor
     }
     else
     {
-        return .black
+        return .lightGray
     }
 }
 private let labelColor: UIColor = fetchLabelColor()

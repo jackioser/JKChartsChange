@@ -13,12 +13,8 @@
 import Foundation
 import CoreGraphics
 
-#if canImport(UIKit)
-import UIKit
-#endif
-
-#if canImport(AppKit)
-import AppKit
+#if !os(OSX)
+    import UIKit
 #endif
 
 @objc
@@ -92,13 +88,13 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
     @objc open weak var delegate: ChartViewDelegate?
     
     /// text that is displayed when the chart is empty
-    @objc open var noDataText = "No chart data available."
+    @objc open var noDataText = "无数据"
     
     /// Font to be used for the no data text.
     @objc open var noDataFont = NSUIFont.systemFont(ofSize: 12)
     
     /// color of the no data text
-    @objc open var noDataTextColor: NSUIColor = .labelOrBlack
+    @objc open var noDataTextColor: NSUIColor = .lightGray
 
     /// alignment of the no data text
     @objc open var noDataTextAlignment: TextAlignment = .left

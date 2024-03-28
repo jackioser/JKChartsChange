@@ -11,6 +11,7 @@
 
 import Foundation
 import CoreGraphics
+import UIKit
 
 open class LineChartRenderer: LineRadarRenderer
 {
@@ -821,9 +822,11 @@ open class LineChartRenderer: LineRadarRenderer
         guard !boundingBox.isNull, !boundingBox.isInfinite, !boundingBox.isEmpty else {
             return
         }
-
-        let gradientStart = CGPoint(x: 0, y: boundingBox.minY)
-        let gradientEnd = CGPoint(x: 0, y: boundingBox.maxY)
+        /// 8.31 change
+//        let gradientStart = CGPoint(x: 0, y: boundingBox.minY)
+//        let gradientEnd = CGPoint(x: 0, y: boundingBox.maxY)
+        let gradientStart = CGPoint(x: 0, y: boundingBox.midY/2)
+        let gradientEnd = CGPoint(x:spline.boundingBox.maxX , y: boundingBox.midY/2)
         let gradientColorComponents: [CGFloat] = dataSet.colors
             .reversed()
             .reduce(into: []) { (components, color) in
@@ -856,8 +859,11 @@ open class LineChartRenderer: LineRadarRenderer
         context.beginPath()
         context.addPath(spline)
         context.replacePathWithStrokedPath()
+        context.setShadow(offset: CGSize(width: 0, height: 2), blur: 0.8, color: UIColor(red: 255.0/255.0, green: 215.0/255.0, blue: 215.0/255.0, alpha: 1).cgColor)
         context.clip()
         context.drawLinearGradient(gradient, start: gradientStart, end: gradientEnd, options: [])
+        
+
     }
     
     /// Creates a nested array of empty subarrays each of which will be populated with NSUIAccessibilityElements.
